@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Data Trail: SQL & Python Study Plan</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700;800&family=Figtree:wght@400;500;600&display=swap">
+<style>
+:root{--bg:#EEF2F7;--surface:#fff;--ink:#14213D;--muted:#5B6783;--line:#D5DCE8;--track:#DDE3EE;--c1:#2F6FED;--c2:#C98A00;--c3:#E4572E;--c4:#16966B;
+--font-d:"Bricolage Grotesque","Trebuchet MS",system-ui,sans-serif;--font-b:"Figtree",system-ui,-apple-system,"Segoe UI",sans-serif;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){color-scheme:dark;--bg:#0F1626;--surface:#18223A;--ink:#E8EDF8;--muted:#9AA7C4;--line:#2B3858;--track:#2A3654;--c1:#6C9BFF;--c2:#F2B93B;--c3:#FF8460;--c4:#3CCB9C}}
+:root[data-theme="dark"]{color-scheme:dark;--bg:#0F1626;--surface:#18223A;--ink:#E8EDF8;--muted:#9AA7C4;--line:#2B3858;--track:#2A3654;--c1:#6C9BFF;--c2:#F2B93B;--c3:#FF8460;--c4:#3CCB9C}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 var(--font-b)}
+main{max-width:860px;margin:0 auto;padding:28px 18px 64px}
+h1,h2,h3{font-family:var(--font-d);margin:0;line-height:1.15}
+h1{font-size:clamp(2rem,6vw,3.1rem);font-weight:800;letter-spacing:-.02em}
+.sub{color:var(--muted);margin:8px 0 22px;max-width:56ch}
+.hero{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:20px}
+.stats{display:flex;flex-wrap:wrap;gap:18px 32px;align-items:baseline;margin-bottom:14px}
+.lvl{font-family:var(--font-d);font-size:1.5rem;font-weight:700}
+.stat{color:var(--muted);font-size:.95rem}.stat b{color:var(--ink);font-size:1.15rem}
+.bar{height:12px;background:var(--track);border-radius:99px;overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--c1),var(--c4));transition:width .5s}
+.trail{display:flex;flex-wrap:wrap;gap:6px;margin-top:18px;align-items:center}
+.node{--p:0;--col:var(--c1);width:22px;height:22px;border-radius:50%;background:conic-gradient(var(--col) calc(var(--p)*1%),var(--track) 0);position:relative;flex:none}
+.node::after{content:"";position:absolute;inset:4px;border-radius:50%;background:var(--surface)}
+.node.done::after{inset:0;background:var(--col)}
+.gap{width:14px;height:2px;background:var(--line);flex:none}
+.tools{display:flex;gap:10px;flex-wrap:wrap;margin:22px 0 6px;align-items:center}
+button{font:inherit;cursor:pointer;border:1px solid var(--line);background:var(--surface);color:var(--ink);padding:8px 14px;border-radius:10px}
+button:hover{border-color:var(--muted)}
+:focus-visible{outline:3px solid var(--c1);outline-offset:2px}
+.phase{margin-top:26px;background:var(--surface);border:1px solid var(--line);border-left:8px solid var(--col);border-radius:14px;padding:16px 16px 8px}
+.phead{display:flex;justify-content:space-between;gap:12px;align-items:baseline;flex-wrap:wrap}
+.phead h2{font-size:1.4rem}.phead span{color:var(--muted);font-size:.92rem}
+.pbar{height:6px;background:var(--track);border-radius:9px;margin:10px 0 6px;overflow:hidden}
+.pbar i{display:block;height:100%;background:var(--col);width:0;transition:width .4s}
+.lesson{border-top:1px solid var(--line);padding:12px 0}
+.lesson:first-of-type{border-top:0}
+.lh{display:flex;width:100%;justify-content:space-between;align-items:center;gap:10px;border:0;background:none;padding:4px 0;text-align:left;border-radius:6px}
+.lh h3{font-size:1.08rem;font-weight:700}
+.lh .id{color:var(--col);font-family:var(--font-d);font-weight:800;margin-right:8px}
+.cnt{color:var(--muted);font-size:.9rem;white-space:nowrap}
+.stamp{display:none;color:var(--col);font-weight:600;font-size:.9rem;margin-right:8px;border:2px solid var(--col);border-radius:6px;padding:0 6px;transform:rotate(-4deg)}
+.lesson.done .stamp{display:inline-block}
+.tasks{list-style:none;margin:8px 0 2px;padding:0}
+.tasks[hidden]{display:none}
+.tasks li{margin:4px 0}
+.tasks label{display:flex;gap:10px;align-items:flex-start;padding:8px;border-radius:10px;cursor:pointer}
+.tasks label:hover{background:var(--bg)}
+.tasks input{width:20px;height:20px;margin-top:2px;accent-color:var(--col);flex:none}
+.tasks input:checked+span .t{text-decoration:line-through;color:var(--muted)}
+.chip{display:inline-block;font-size:.78rem;font-weight:600;padding:1px 8px;border-radius:99px;margin-right:8px;border:1px solid var(--line);color:var(--muted)}
+.chip.Learn{border-color:var(--c1);color:var(--c1)}.chip.Practice{border-color:var(--c2);color:var(--c2)}.chip.Build{border-color:var(--c4);color:var(--c4)}
+.rhythm{margin-top:34px;color:var(--muted);font-size:.95rem}
+.rhythm table{border-collapse:collapse;margin-top:8px;width:100%;max-width:520px}
+.rhythm td{padding:6px 10px;border-bottom:1px solid var(--line)}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translate(-50%,30px);background:var(--ink);color:var(--bg);padding:10px 18px;border-radius:12px;opacity:0;pointer-events:none;transition:.3s;font-weight:600;max-width:90vw}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+.hide-done .lesson.done{display:none}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<main>
+<h1>Data Trail</h1>
+<p class="sub">An 8-week climb from SQL to a working productivity app. Check off tasks as you finish them; progress saves in this browser.</p>
+
+<section class="hero" aria-label="Overall progress">
+ <div class="stats">
+  <div class="lvl" id="lvl">Trailhead</div>
+  <div class="stat"><b id="xp">0</b> XP</div>
+  <div class="stat"><b id="pct">0%</b> complete</div>
+  <div class="stat"><b id="lc">0</b> of <span id="lt">0</span> lessons cleared</div>
+ </div>
+ <div class="bar" role="progressbar" aria-label="Overall progress" aria-valuemin="0" aria-valuemax="100" id="pb"><i id="pf"></i></div>
+ <div class="trail" id="trail" aria-label="Lesson trail"></div>
+</section>
+
+<div class="tools">
+ <button id="expand">Expand all</button>
+ <button id="collapse">Collapse all</button>
+ <button id="hide" aria-pressed="false">Hide cleared lessons</button>
+ <button id="reset">Reset progress</button>
+</div>
+
+<div id="phases"></div>
+
+<section class="rhythm">
+ <b>Weekly rhythm at 10 hours</b>
+ <table>
+  <tr><td>Learn</td><td>3 h</td><td>Lesson and worked examples</td></tr>
+  <tr><td>Practice</td><td>3 h</td><td>AML exercises</td></tr>
+  <tr><td>Build</td><td>2 h</td><td>App deliverable for the lesson</td></tr>
+  <tr><td>Review</td><td>2 h</td><td>Write up findings, add to portfolio</td></tr>
+ </table>
+</section>
+</main>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+const L='Learn',P='Practice',B='Build';
+const PHASES=[
+{id:'p1',name:'SQL in BigQuery',weeks:'Weeks 1–2',col:'--c1',lessons:[
+ {id:'1.1',t:'Grain & keys',k:[[L,'Map PK, FK and cardinality across the 5 tables'],[P,'Profile each table: rows, distinct keys, null rates, orphan FKs'],[P,'Reconcile transactions: your file has 46,838 rows vs the roadmap’s 46,793'],[B,'Draft the app schema: sessions, projects, tags, notes']]},
+ {id:'1.2',t:'Filtering & flags',k:[[L,'WHERE, BETWEEN, LIKE, IS NULL in BigQuery syntax'],[P,'Flag PHP 450,000–499,999 as Near Threshold and 500,000+ as Large'],[B,'Define what counts as a focus session with a CASE flag']]},
+ {id:'1.3',t:'Aggregation',k:[[L,'GROUP BY, HAVING, COUNT(DISTINCT)'],[P,'Alert rate by rule, channel and occupation'],[B,'Write time-per-project queries']]},
+ {id:'1.4',t:'Joins & CTEs',k:[[L,'Fan-out and pre-aggregation with CTEs'],[P,'Pre-aggregate alerts by tx_id, then join'],[P,'Join accounts twice (originator and destination); row count must equal transactions'],[B,'Join sessions to projects']]},
+ {id:'1.5',t:'Window functions',k:[[L,'ROW_NUMBER, LAG, running totals, PARTITION BY'],[P,'Time between a customer’s consecutive transactions'],[B,'Compute streaks, gaps and context-switch counts']]}
+]},
+{id:'p2',name:'Python & pandas',weeks:'Weeks 3–4',col:'--c2',lessons:[
+ {id:'2.1',t:'Core Python',k:[[L,'Types, dicts, loops, functions, modules, venv, file I/O'],[P,'Write a table-count reconciliation script in Colab'],[B,'Create the app’s config and logging module']]},
+ {id:'2.2',t:'pandas basics',k:[[L,'.loc/.iloc, boolean masks, astype, dedupe, missing data'],[P,'Clean transactions and document every change'],[B,'Build a CSV/JSON importer']]},
+ {id:'2.3',t:'pandas aggregation',k:[[L,'groupby, merge with validate, pivot_table'],[P,'Reproduce your Phase 1 SQL in pandas; results must match'],[B,'Reproduce the app queries in pandas']]},
+ {id:'2.4',t:'SQL from Python',k:[[L,'sqlite3, read_sql, parameterized queries'],[P,'Load the 5 CSVs into SQLite and rerun your SQL'],[B,'Stand up the app’s local SQLite database']]},
+ {id:'2.5',t:'Visualization',k:[[L,'Matplotlib and Seaborn basics'],[P,'Plot amount distributions and alert score by outcome'],[B,'Chart weekly time allocation']]},
+ {id:'2.6',t:'Testing with pytest',k:[[L,'Fixtures and parametrize'],[P,'Test your cleaning functions'],[B,'Write tests for the app’s data layer']]}
+]},
+{id:'p3',name:'Analysis with rigor',weeks:'Weeks 5–6',col:'--c3',lessons:[
+ {id:'3.1',t:'Alert quality',k:[[L,'Precision, false-positive rate, confidence intervals'],[P,'Rank rules by alert-to-case conversion with intervals']]},
+ {id:'3.2',t:'Alert prioritization',k:[[L,'Transparent scoring, then simple logistic regression'],[P,'Produce a ranked alert list for investigators']]},
+ {id:'3.3',t:'Statistical hygiene',k:[[L,'Chi-square, Kruskal–Wallis, effect size, assumptions'],[P,'Attach a test, an effect size and a caveat to every claim']]},
+ {id:'3.4',t:'Bias & fairness',k:[[L,'Where KYC score and occupation can skew alerts'],[P,'Write a one-line fairness note per finding']]},
+ {id:'3.5',t:'Storytelling',k:[[L,'Technical vs plain-language framing'],[P,'Build a 5-slide AML readout'],[B,'Add the work to your GitHub or LinkedIn portfolio']]}
+]},
+{id:'p4',name:'Build the app',weeks:'Weeks 7–8+',col:'--c4',lessons:[
+ {id:'4.1',t:'Design decisions',k:[[L,'Set the idle threshold (e.g. 5 minutes without input)'],[L,'Privacy: app name only by default, titles opt-in, exclusion list, local only']]},
+ {id:'4.2',t:'v0.1 Logger',k:[[B,'Track the active app with start and end times into SQLite'],[B,'Add manual project tags'],[B,'Run it for 3 days and sanity-check the data']]},
+ {id:'4.3',t:'v0.2 Query',k:[[B,'Add saved queries and a SQL query box'],[B,'Add daily and weekly summary views and charts']]},
+ {id:'4.4',t:'v0.3 Insights',k:[[B,'Rule-based tips: context switches per hour, longest focus block'],[B,'Label every insight as observational, not causal'],[B,'Optional: Claude API coaching over aggregated stats only']]}
+]}];
+const KEY='datatrail.v1',XP_TASK=10,XP_LESSON=25;
+let st={done:{},open:{}};
+try{const s=localStorage.getItem(KEY);if(s)st=Object.assign(st,JSON.parse(s))}catch(e){}
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(st))}catch(e){}};
+const $=id=>document.getElementById(id);
+const LEVELS=[[0,'Trailhead'],[10,'Query Apprentice'],[30,'Join Wrangler'],[50,'Pandas Handler'],[70,'Insight Hunter'],[90,'Summit Builder'],[100,'Shipped It']];
+const ids=(l)=>l.k.map((_,i)=>l.id+'-'+i);
+const phasesEl=$('phases');
+phasesEl.innerHTML=PHASES.map(p=>`<section class="phase" data-p="${p.id}" style="--col:var(${p.col})">
+<div class="phead"><h2>${p.name}</h2><span>${p.weeks} · <span class="pc"></span></span></div>
+<div class="pbar"><i></i></div>
+${p.lessons.map(l=>`<div class="lesson" data-l="${l.id}"><button class="lh" aria-expanded="false"><h3><span class="id">${l.id}</span>${l.t}</h3><span><span class="stamp">Cleared</span><span class="cnt"></span></span></button>
+<ul class="tasks" hidden>${l.k.map((x,i)=>`<li><label><input type="checkbox" data-id="${l.id}-${i}"><span><span class="chip ${x[0]}">${x[0]}</span><span class="t">${x[1]}</span></span></label></li>`).join('')}</ul></div>`).join('')}
+</section>`).join('');
+$('trail').innerHTML=PHASES.map(p=>p.lessons.map(l=>`<span class="node" data-n="${l.id}" style="--col:var(${p.col})" title="${l.id} ${l.t}"></span>`).join('')).join('<span class="gap"></span>');
+const total=PHASES.flatMap(p=>p.lessons);
+const nTasks=total.reduce((a,l)=>a+l.k.length,0);
+$('lt').textContent=total.length;
+function toast(m){const t=$('toast');t.textContent=m;t.classList.add('on');clearTimeout(toast.h);toast.h=setTimeout(()=>t.classList.remove('on'),2200)}
+function render(){
+ let done=0,cleared=0;
+ PHASES.forEach(p=>{
+  let pd=0,pn=0;
+  p.lessons.forEach(l=>{
+   const c=ids(l).filter(i=>st.done[i]).length;pd+=c;pn+=l.k.length;
+   const el=document.querySelector(`[data-l="${l.id}"]`);
+   const full=c===l.k.length;if(full)cleared++;
+   el.classList.toggle('done',full);
+   el.querySelector('.cnt').textContent=c+'/'+l.k.length;
+   const open=!!st.open[l.id];
+   el.querySelector('.tasks').hidden=!open;el.querySelector('.lh').setAttribute('aria-expanded',open);
+   el.querySelectorAll('input').forEach(b=>b.checked=!!st.done[b.dataset.id]);
+   const n=document.querySelector(`[data-n="${l.id}"]`);
+   n.style.setProperty('--p',Math.round(c/l.k.length*100));n.classList.toggle('done',full);
+  });
+  done+=pd;
+  const ph=document.querySelector(`[data-p="${p.id}"]`);
+  ph.querySelector('.pbar i').style.width=(pd/pn*100)+'%';
+  ph.querySelector('.pc').textContent=pd+' of '+pn+' tasks';
+ });
+ const pct=Math.round(done/nTasks*100);
+ $('xp').textContent=done*XP_TASK+cleared*XP_LESSON;
+ $('pct').textContent=pct+'%';$('lc').textContent=cleared;
+ $('pf').style.width=pct+'%';$('pb').setAttribute('aria-valuenow',pct);
+ $('lvl').textContent=LEVELS.filter(x=>pct>=x[0]).pop()[1];
+}
+phasesEl.addEventListener('change',e=>{
+ const b=e.target.closest('input[data-id]');if(!b)return;
+ const lid=b.dataset.id.split('-')[0],lesson=total.find(l=>l.id===lid);
+ const was=ids(lesson).every(i=>st.done[i]);
+ if(b.checked)st.done[b.dataset.id]=1;else delete st.done[b.dataset.id];
+ save();render();
+ const now=ids(lesson).every(i=>st.done[i]);
+ if(now&&!was)toast('Lesson '+lid+' cleared: +'+XP_LESSON+' bonus XP');
+});
+phasesEl.addEventListener('click',e=>{
+ const h=e.target.closest('.lh');if(!h)return;
+ const id=h.parentElement.dataset.l;st.open[id]=!st.open[id];save();render();
+});
+$('expand').onclick=()=>{total.forEach(l=>st.open[l.id]=1);save();render()};
+$('collapse').onclick=()=>{st.open={};save();render()};
+$('hide').onclick=e=>{const on=document.body.classList.toggle('hide-done');e.target.setAttribute('aria-pressed',on)};
+$('reset').onclick=()=>{if(confirm('Reset all progress? This cannot be undone.')){st={done:{},open:{}};save();render()}};
+if(!Object.keys(st.open).length)st.open['1.1']=1;
+render();
+</script>
+</body>
+</html>
